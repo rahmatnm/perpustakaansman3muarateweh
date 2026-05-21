@@ -583,7 +583,7 @@
 
     <!-- MODAL EDIT / TAMBAH BUKU (ADMIN) -->
     <div id="add-book-modal" class="hidden fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-        <div class="bg-white rounded-2xl max-w-xl w-full max-h-[90vh] overflow-y-auto shadow-2xl relative border border-slate-100">
+        <div class="bg-white rounded-2xl max-w-xl w-full max-h-[90vh] overflow-y-auto shadow-2xl relative border border-slate-100 font-sans">
             <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
                 <h3 class="text-lg font-bold text-slate-800" id="admin-modal-title">Tambah Koleksi Buku Baru</h3>
                 <button onclick="closeAddBookModal()" class="text-slate-400 hover:text-slate-600 p-2 rounded-lg hover:bg-slate-200 transition-colors">
@@ -648,7 +648,7 @@
     </div>
 
     <!-- MODAL FORM PEMINJAMAN -->
-    <div id="borrow-form-modal" class="hidden fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+    <div id="borrow-form-modal" class="hidden fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm font-sans">
         <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl relative border border-slate-100 overflow-hidden">
             <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
                 <div class="flex items-center gap-2">
@@ -703,8 +703,8 @@
         </div>
     </div>
 
-    <!-- MODAL KELOLA KATEGORI (MANUAL BARU) -->
-    <div id="category-modal" class="hidden fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+    <!-- MODAL KELOLA KATEGORI -->
+    <div id="category-modal" class="hidden fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm font-sans">
         <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl relative border border-slate-100 overflow-hidden">
             <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
                 <div class="flex items-center gap-2">
@@ -742,7 +742,7 @@
     </div>
 
     <!-- MODAL BIODATA & JAM OPERASIONAL -->
-    <div id="bio-modal" class="hidden fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+    <div id="bio-modal" class="hidden fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm font-sans">
         <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl relative border border-slate-100 overflow-hidden flex flex-col">
             <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
                 <div class="flex items-center gap-2">
@@ -814,7 +814,7 @@
     </div>
 
     <!-- KONFIRMASI DELETE MODAL -->
-    <div id="delete-confirm-modal" class="hidden fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+    <div id="delete-confirm-modal" class="hidden fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm font-sans">
         <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-slate-100 text-center">
             <div class="mx-auto w-12 h-12 bg-rose-50 text-rose-600 rounded-full flex items-center justify-center mb-4">
                 <i data-lucide="trash-2" class="w-6 h-6"></i>
@@ -828,10 +828,23 @@
         </div>
     </div>
 
-    <!-- SCRIPT LOGIKA UTAMA PERPUSTAKAAN -->
-    <script>
-        // MOCK DATA BUKU AWAL (Dengan tambahan field barcode unik dan kategori Buku Pelajaran baru)
-        let INITIAL_BOOKS = [
+    <!-- INTEGRASI SDK FIREBASE & FIRESTORE VIA CDN ES6 -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { signInAnonymously, getAuth, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { 
+            getFirestore, 
+            collection, 
+            doc, 
+            setDoc, 
+            addDoc, 
+            updateDoc, 
+            deleteDoc, 
+            onSnapshot
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // MOCK DATA BUKU AWAL (Disimpan di dalam scope modul utama)
+        const INITIAL_BOOKS = [
             {
                 id: "PC-001",
                 barcode: "8902111003",
@@ -839,7 +852,7 @@
                 author: "Prof. Dr. Ir. Budi Raharjo",
                 category: "Teknologi",
                 year: 2022,
-                desc: "Sebuah panduan komprehensif bagi pemula untuk memahami konsep-konsep inti pemrograman komputer, struktur data dasar, serta cara berpikir logis terstruktur guna memecahkan masalah reyakasa perangkat lunak.",
+                desc: "Sebuah panduan komprehensif bagi pemula untuk memahami konsep-konsep inti pemrograman komputer, struktur data dasar, serta cara berpikir logis terstruktur guna memecahkan masalah rekayasa perangkat lunak.",
                 totalStock: 5,
                 availableStock: 3
             },
@@ -894,7 +907,7 @@
                 author: "Marthen Kanginan",
                 category: "Buku Pelajaran",
                 year: 2020,
-                desc: "Buku panduan pembelajaran Fisika untuk siswa kelas XI SMA program peminatan IPA. Berisi pembahasan mendalam tentang dinamika rotasi, keseimbangan benda tegar, elastisitas, fluida statis and dinamis, serta teori kinetik gas.",
+                desc: "Buku panduan pembelajaran Fisika untuk siswa kelas XI SMA program peminatan IPA. Berisi pembahasan mendalam tentang dinamika rotasi, keseimbangan benda tegar, elastisitas, fluida statis dan dinamis, serta teori kinetik gas.",
                 totalStock: 8,
                 availableStock: 7
             },
@@ -922,8 +935,52 @@
             }
         ];
 
+        // Konfigurasi Proyek Firebase Resmi Anda
+        const firebaseConfig = typeof __firebase_config !== "undefined" ? JSON.parse(__firebase_config) : {
+            apiKey: "AIzaSyCcPqxsdjTPqJxqgiiAZrDw-EFewG2279I",
+            authDomain: "perpustakaansman3muarateweh.firebaseapp.com",
+            databaseURL: "https://perpustakaansman3muarateweh-default-rtdb.firebaseio.com",
+            projectId: "perpustakaansman3muarateweh",
+            storageBucket: "perpustakaansman3muarateweh.firebasestorage.app",
+            messagingSenderId: "202384072752",
+            appId: "1:202384072752:web:24e3448e91aa25fbf74df5",
+            measurementId: "G-B4E84B6TYL"
+        };
+
+        // Inisialisasi Firebase & Layanan Pendukung
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'sman3-perpustakaan';
+
+        // Penanganan Otentikasi sebelum Query Database
+        const initAuth = async () => {
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+            } catch (err) {
+                console.error("Gagal melakukan otentikasi Firebase:", err);
+            }
+        };
+
+        // Daftarkan ke global window agar fungsi navigasi dan form dapat mengakses state terintegrasi
+        window.state = {
+            books: [],
+            borrowedBooks: [], 
+            logs: [], 
+            categories: ['Buku Pelajaran', 'Fiksi', 'Sains', 'Teknologi', 'Bisnis & Keuangan', 'Sejarah', 'Sastra'], 
+            activeCategoryFilter: 'Semua',
+            searchQuery: '',
+            adminSearchQuery: '',
+            deleteTargetId: null,
+            isAdminLoggedIn: false 
+        };
+
         // KOORDINASI GRADASI WARNA SAMPUL (Berdasarkan Kategori)
-        const CATEGORY_COLORS = {
+        window.CATEGORY_COLORS = {
             "Buku Pelajaran": "from-sky-500 to-indigo-500",
             "Fiksi": "from-rose-500 to-amber-500",
             "Sains": "from-teal-500 to-emerald-500",
@@ -934,7 +991,7 @@
         };
 
         // KOORDINASI IKON SAMPUL (Berdasarkan Kategori)
-        const CATEGORY_ICONS = {
+        window.CATEGORY_ICONS = {
             "Buku Pelajaran": "graduation-cap",
             "Fiksi": "sparkles",
             "Sains": "atom",
@@ -944,47 +1001,10 @@
             "Sastra": "palette"
         };
 
-        // STATE MANAGER APLIKASI
-        let state = {
-            books: [],
-            borrowedBooks: [], // Format: { bookId, borrowDate, dueDate, borrowerName, borrowerStatus, borrowerClass }
-            logs: [], // Format: { text, date, type: 'borrow'|'return' }
-            categories: ['Buku Pelajaran', 'Fiksi', 'Sains', 'Teknologi', 'Bisnis & Keuangan', 'Sejarah', 'Sastra'], // Menyimpan list kategori dinamis
-            activeCategoryFilter: 'Semua',
-            searchQuery: '',
-            adminSearchQuery: '',
-            deleteTargetId: null,
-            isAdminLoggedIn: false // State untuk validasi login admin
-        };
-
-        // INISIALISASI SAAT HALAMAN DILUAD
-        window.addEventListener('DOMContentLoaded', () => {
-            // Load dari local memory/mock data
-            state.books = [...INITIAL_BOOKS];
-            state.logs = [
-                { text: "Sistem perpustakaan SMAN 3 Muara Teweh berhasil diinisialisasi.", date: "Mei 21, 2026", type: "system" },
-                { text: "Buku 'Dunia Sophie' telah dipinjam oleh Siswa (Andi Wijaya - XI MIPA 1).", date: "Mei 18, 2026", type: "borrow" }
-            ];
-            
-            // Masukkan satu buku default dipinjam dengan detail identitas untuk demo
-            state.borrowedBooks = [
-                {
-                    bookId: "PC-002",
-                    borrowDate: "2026-05-18",
-                    dueDate: "2026-05-25",
-                    borrowerName: "Andi Wijaya",
-                    borrowerStatus: "Siswa",
-                    borrowerClass: "XI MIPA 1"
-                }
-            ];
-
-            lucide.createIcons();
-            updateAllViews();
-        });
-
         // TOAST NOTIFICATION UTILITY
-        function showToast(message, type = 'success') {
+        window.showToast = function(message, type = 'success') {
             const container = document.getElementById('toast-container');
+            if (!container) return;
             const toast = document.createElement('div');
             
             const bgClass = type === 'success' ? 'bg-emerald-600' : (type === 'error' ? 'bg-rose-600' : 'bg-slate-800');
@@ -993,7 +1013,7 @@
             toast.className = `${bgClass} text-white px-4 py-3.5 rounded-xl shadow-xl flex items-center gap-3 transition-all duration-300 transform translate-y-2 opacity-0 text-sm font-semibold max-w-sm w-full`;
             toast.innerHTML = `
                 <i data-lucide="${iconName}" class="w-5 h-5 shrink-0"></i>
-                <span class="flex-grow">${message}</span>
+                <span class="flex-grow text-xs sm:text-sm">${message}</span>
                 <button class="hover:text-slate-200 transition-colors shrink-0" onclick="this.parentElement.remove()">
                     <i data-lucide="x" class="w-4 h-4"></i>
                 </button>
@@ -1001,39 +1021,36 @@
             container.appendChild(toast);
             lucide.createIcons();
 
-            // Animasi Masuk
             setTimeout(() => {
                 toast.classList.remove('translate-y-2', 'opacity-0');
             }, 50);
 
-            // Hilang Otomatis setelah 4 detik
             setTimeout(() => {
                 toast.classList.add('opacity-0');
                 setTimeout(() => toast.remove(), 300);
             }, 4000);
-        }
+        };
 
         // FUNGSI MEMBUAT TAMPILAN GARIS BARCODE DINAMIS
-        function renderVisualBarcode(barcodeStr) {
+        window.renderVisualBarcode = function(barcodeStr) {
             const container = document.getElementById('modal-barcode-stripes');
+            if (!container) return;
             container.innerHTML = '';
             
             const rawSeed = barcodeStr || 'SMAN3';
-            
-            // Generate visual bars based on characters inside barcode string
             for (let i = 0; i < rawSeed.length * 3; i++) {
                 const indexChar = i % rawSeed.length;
                 const charCode = rawSeed.charCodeAt(indexChar);
-                const width1 = ((charCode + i) % 3) + 1; // Width of 1, 2, or 3 pixels
-                const width2 = (((charCode * i) + 2) % 3) + 1; // Spacer pixels
+                const width1 = ((charCode + i) % 3) + 1;
+                const width2 = (((charCode * i) + 2) % 3) + 1;
                 
                 container.innerHTML += `<div class="bg-slate-900 h-8 shrink-0" style="width: ${width1}px"></div>`;
                 container.innerHTML += `<div class="bg-white h-8 shrink-0" style="width: ${width2}px"></div>`;
             }
-        }
+        };
 
         // TABS / GANTI SEKSI UTAMA
-        function changeTab(targetTab) {
+        window.changeTab = function(targetTab) {
             const sections = ['beranda', 'katalog', 'peminjaman', 'biodata', 'admin'];
             
             sections.forEach(tab => {
@@ -1041,56 +1058,54 @@
                 const navEl = document.getElementById(`nav-${tab}`);
                 
                 if (tab === targetTab) {
-                    sectionEl.classList.remove('hidden');
-                    sectionEl.classList.add('opacity-100');
+                    if (sectionEl) sectionEl.classList.remove('hidden');
+                    if (sectionEl) sectionEl.classList.add('opacity-100');
                     if (navEl) {
                         navEl.className = "px-4 py-2 rounded-lg text-sm font-semibold transition-colors text-indigo-600 bg-indigo-50/50";
                     }
                 } else {
-                    sectionEl.classList.add('hidden');
-                    sectionEl.classList.remove('opacity-100');
+                    if (sectionEl) sectionEl.classList.add('hidden');
+                    if (sectionEl) sectionEl.classList.remove('opacity-100');
                     if (navEl) {
                         navEl.className = "px-4 py-2 rounded-lg text-sm font-semibold transition-colors text-slate-600 hover:text-indigo-600 hover:bg-slate-50";
                     }
                 }
             });
 
-            // SINKRONISASI INTERFACES DI DALAM TAB ADMIN
             if (targetTab === 'admin') {
                 const loginView = document.getElementById('admin-login-view');
                 const mainView = document.getElementById('admin-main-view');
                 
-                if (state.isAdminLoggedIn) {
-                    loginView.classList.add('hidden');
-                    mainView.classList.remove('hidden');
+                if (window.state.isAdminLoggedIn) {
+                    if (loginView) loginView.classList.add('hidden');
+                    if (mainView) mainView.classList.remove('hidden');
                 } else {
-                    loginView.classList.remove('hidden');
-                    mainView.classList.add('hidden');
-                    // Reset field login
+                    if (loginView) loginView.classList.remove('hidden');
+                    if (mainView) mainView.classList.add('hidden');
                     document.getElementById('admin-login-form').reset();
                 }
             }
 
-            // Sinkronkan mobile menu agar tertutup setelah klik
             document.getElementById('mobile-menu').classList.add('hidden');
             const menuIcon = document.getElementById('menu-icon');
-            menuIcon.setAttribute('data-lucide', 'menu');
+            if (menuIcon) menuIcon.setAttribute('data-lucide', 'menu');
             lucide.createIcons();
 
             window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
+        };
 
-        function toggleMobileMenu() {
+        window.toggleMobileMenu = function() {
             const menu = document.getElementById('mobile-menu');
             const menuIcon = document.getElementById('menu-icon');
+            if (!menu || !menuIcon) return;
             const isHidden = menu.classList.toggle('hidden');
             
             menuIcon.setAttribute('data-lucide', isHidden ? 'menu' : 'x');
             lucide.createIcons();
-        }
+        };
 
         // FUNGSI UTK RENDERING DINAMIS SEMUA VIEW
-        function updateAllViews() {
+        window.updateAllViews = function() {
             renderPopularBooks();
             renderCatalog();
             renderCategoryFilters();
@@ -1101,46 +1116,57 @@
             updateBadges();
             renderCategorySelectOptions();
             lucide.createIcons();
-        }
+        };
 
-        // UPDATE BADGES (Keranjang/Buku Saya)
-        function updateBadges() {
+        // UPDATE BADGES (Buku Saya)
+        window.updateBadges = function() {
             const badge = document.getElementById('borrow-badge');
             const badgeMobile = document.getElementById('borrow-badge-mobile');
-            const totalLoans = state.borrowedBooks.length;
+            const totalLoans = window.state.borrowedBooks.length;
 
             if (totalLoans > 0) {
-                badge.textContent = totalLoans;
-                badge.classList.remove('hidden');
-                badgeMobile.textContent = totalLoans;
-                badgeMobile.classList.remove('hidden');
+                if (badge) {
+                    badge.textContent = totalLoans;
+                    badge.classList.remove('hidden');
+                }
+                if (badgeMobile) {
+                    badgeMobile.textContent = totalLoans;
+                    badgeMobile.classList.remove('hidden');
+                }
             } else {
-                badge.classList.add('hidden');
-                badgeMobile.classList.add('hidden');
+                if (badge) badge.classList.add('hidden');
+                if (badgeMobile) badgeMobile.classList.add('hidden');
             }
-        }
+        };
 
-        // SINKRONISASI PANEL STATISTIK (Menampilkan Jumlah Judul, Total Eksemplar, dan Jumlah Kategori Dinamis)
-        function updateStatistics() {
-            const judulBuku = state.books.length;
-            const totalEksemplar = state.books.reduce((acc, book) => acc + book.totalStock, 0);
-            const dipinjam = state.borrowedBooks.length;
-            const tersedia = state.books.reduce((acc, book) => acc + book.availableStock, 0);
-            const kategoriCount = state.categories.length; // Menggunakan state categories dinamis
+        // SINKRONISASI PANEL STATISTIK (Dinamis dari Firebase / Memory State)
+        window.updateStatistics = function() {
+            const judulBuku = window.state.books.length;
+            const totalEksemplar = window.state.books.reduce((acc, book) => acc + (parseInt(book.totalStock) || 0), 0);
+            const dipinjam = window.state.borrowedBooks.length;
+            const tersedia = window.state.books.reduce((acc, book) => acc + (parseInt(book.availableStock) || 0), 0);
+            const kategoriCount = window.state.categories.length;
 
-            document.getElementById('stat-judul-buku').textContent = judulBuku;
-            document.getElementById('stat-total-eksemplar').textContent = totalEksemplar;
-            document.getElementById('stat-buku-dipinjam').textContent = dipinjam;
-            document.getElementById('stat-buku-tersedia').textContent = tersedia;
-            document.getElementById('stat-kategori').textContent = kategoriCount;
-        }
+            const statJudul = document.getElementById('stat-judul-buku');
+            const statEksemplar = document.getElementById('stat-total-eksemplar');
+            const statDipinjam = document.getElementById('stat-buku-dipinjam');
+            const statTersedia = document.getElementById('stat-buku-tersedia');
+            const statKategori = document.getElementById('stat-kategori');
+
+            if (statJudul) statJudul.textContent = judulBuku;
+            if (statEksemplar) statEksemplar.textContent = totalEksemplar;
+            if (statDipinjam) statDipinjam.textContent = dipinjam;
+            if (statTersedia) statTersedia.textContent = tersedia;
+            if (statKategori) statKategori.textContent = kategoriCount;
+        };
 
         // RENDER LOGS AKTIVITAS
-        function renderLogs() {
+        window.renderLogs = function() {
             const logsList = document.getElementById('logs-list');
+            if (!logsList) return;
             logsList.innerHTML = '';
 
-            state.logs.forEach(log => {
+            window.state.logs.forEach(log => {
                 let icon = 'info';
                 let colorClass = 'text-slate-400 bg-slate-50';
                 
@@ -1164,28 +1190,27 @@
                     </div>
                 `;
             });
-        }
+        };
 
         // RENDER REKOMENDASI POPULER (DI BERANDA)
-        function renderPopularBooks() {
+        window.renderPopularBooks = function() {
             const grid = document.getElementById('popular-books-grid');
+            if (!grid) return;
             grid.innerHTML = '';
             
-            // Ambil 4 buku pertama untuk dipromosikan di beranda
-            const popularBooks = state.books.slice(0, 4);
+            const popularBooks = window.state.books.slice(0, 4);
 
             popularBooks.forEach(book => {
-                const isAvailable = book.availableStock > 0;
+                const isAvailable = (parseInt(book.availableStock) || 0) > 0;
                 const statusTag = isAvailable 
                     ? `<span class="bg-emerald-50 text-emerald-700 text-[10px] font-bold px-2.5 py-1 rounded-full border border-emerald-100 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Tersedia</span>`
-                    : `<span class="bg-rose-50 text-rose-700 text-[10px] font-bold px-2.5 py-1 rounded-full border border-rose-100 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> Dipinjam</span>`;
+                    : `<span class="bg-rose-50 text-rose-700 text-[10px] font-bold px-2.5 py-1 rounded-full border border-rose-100 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> Habis</span>`;
 
-                const coverColor = CATEGORY_COLORS[book.category] || "from-slate-500 to-slate-700";
-                const coverIcon = CATEGORY_ICONS[book.category] || "book";
+                const coverColor = window.CATEGORY_COLORS[book.category] || "from-slate-500 to-slate-700";
+                const coverIcon = window.CATEGORY_ICONS[book.category] || "book";
 
                 grid.innerHTML += `
                     <div class="bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 overflow-hidden flex flex-col h-full group">
-                        <!-- Cover Visual Representatif -->
                         <div class="relative bg-gradient-to-br ${coverColor} h-48 flex flex-col items-center justify-center p-4 text-white text-center cursor-pointer" onclick="openBookDetail('${book.id}')">
                             <div class="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[1px]">
                                 <span class="bg-white/20 backdrop-blur-md px-3.5 py-1.5 rounded-lg text-xs font-bold border border-white/20">Lihat Detail</span>
@@ -1194,16 +1219,15 @@
                             <h4 class="font-extrabold text-sm line-clamp-2 px-2 drop-shadow-sm">${book.title}</h4>
                             <p class="text-[10px] text-white/80 mt-1 uppercase tracking-wider">${book.category}</p>
                         </div>
-                        <!-- Konten Detil -->
                         <div class="p-5 flex-grow flex flex-col justify-between">
                             <div>
                                 <div class="flex items-center justify-between gap-2 mb-2">
-                                    <span class="text-[10px] text-slate-400 font-semibold">${book.author}</span>
+                                    <span class="text-[10px] text-slate-400 font-semibold line-clamp-1">${book.author}</span>
                                     ${statusTag}
                                 </div>
-                                <h3 class="font-bold text-slate-900 text-sm leading-snug line-clamp-1 group-hover:text-indigo-600 cursor-pointer transition-colors" onclick="openBookDetail('${book.id}')">${book.title}</h3>
-                                <p class="text-[10px] text-indigo-600 font-mono font-bold tracking-wider mt-1"><i data-lucide="barcode" class="w-3.5 h-3.5 inline mr-1"></i>${book.barcode}</p>
-                                <p class="text-xs text-slate-500 line-clamp-2 mt-2 leading-relaxed">${book.desc}</p>
+                                <h3 class="font-bold text-slate-900 text-sm leading-snug line-clamp-1 group-hover:text-indigo-600 transition-colors cursor-pointer" onclick="openBookDetail('${book.id}')">${book.title}</h3>
+                                <p class="text-[10px] text-indigo-600 font-mono font-bold tracking-wider mt-1"><i data-lucide="barcode" class="w-3.5 h-3.5 inline mr-1"></i>${book.barcode || '-'}</p>
+                                <p class="text-xs text-slate-500 line-clamp-2 mt-2 leading-relaxed">${book.desc || ''}</p>
                             </div>
                             <div class="mt-4 pt-4 border-t border-slate-50 flex items-center justify-between">
                                 <span class="text-xs text-slate-400">Stok: <strong>${book.availableStock}/${book.totalStock}</strong></span>
@@ -1215,18 +1239,18 @@
                     </div>
                 `;
             });
-        }
+        };
 
         // RENDER CATEGORY FILTERS DI HALAMAN KATALOG (Dinamis Berdasarkan State)
-        function renderCategoryFilters() {
+        window.renderCategoryFilters = function() {
             const container = document.getElementById('category-filter-container');
+            if (!container) return;
             container.innerHTML = '';
 
-            // Gabungkan filter 'Semua' dengan daftar kategori di state
-            const categories = ['Semua', ...state.categories];
+            const categories = ['Semua', ...window.state.categories];
 
             categories.forEach(cat => {
-                const isActive = state.activeCategoryFilter === cat;
+                const isActive = window.state.activeCategoryFilter === cat;
                 const activeClasses = "bg-indigo-600 text-white shadow-md shadow-indigo-600/10";
                 const inactiveClasses = "bg-slate-50 hover:bg-slate-100 text-slate-600 hover:text-indigo-600";
                 
@@ -1236,88 +1260,96 @@
                     </button>
                 `;
             });
-        }
+        };
 
         // UPDATE FILTER KATEGORI KATALOG
-        function setCategoryFilter(category) {
-            state.activeCategoryFilter = category;
+        window.setCategoryFilter = function(category) {
+            window.state.activeCategoryFilter = category;
             renderCategoryFilters();
             renderCatalog();
             lucide.createIcons();
-        }
+        };
 
         // SEARCH HERO HANDLER
-        function triggerHeroSearch() {
-            const query = document.getElementById('hero-search-input').value;
-            state.searchQuery = query;
-            document.getElementById('catalog-search').value = query;
+        window.triggerHeroSearch = function() {
+            const queryVal = document.getElementById('hero-search-input').value;
+            window.state.searchQuery = queryVal;
+            const catSearch = document.getElementById('catalog-search');
+            if (catSearch) catSearch.value = queryVal;
             changeTab('katalog');
-        }
+        };
 
         // LAKUKAN REALTIME SEARCH DI KATALOG (Mendukung Pencarian Barcode)
-        document.getElementById('catalog-search').addEventListener('input', (e) => {
-            state.searchQuery = e.target.value;
-            renderCatalog();
-            lucide.createIcons();
-        });
+        const catSearchEl = document.getElementById('catalog-search');
+        if (catSearchEl) {
+            catSearchEl.addEventListener('input', (e) => {
+                window.state.searchQuery = e.target.value;
+                renderCatalog();
+                lucide.createIcons();
+            });
+        }
 
         // RESET SEMUA FILTER PADA STATE KOSONG
-        function resetFilters() {
-            state.searchQuery = '';
-            state.activeCategoryFilter = 'Semua';
-            document.getElementById('catalog-search').value = '';
+        window.resetFilters = function() {
+            window.state.searchQuery = '';
+            window.state.activeCategoryFilter = 'Semua';
+            const catSearch = document.getElementById('catalog-search');
+            if (catSearch) catSearch.value = '';
             renderCategoryFilters();
             renderCatalog();
             lucide.createIcons();
-        }
+        };
 
         // RENDER UTAMA GRID KATALOG BUKU
-        function renderCatalog() {
+        window.renderCatalog = function() {
             const grid = document.getElementById('catalog-grid');
             const emptyState = document.getElementById('catalog-empty-state');
             const resultsInfo = document.getElementById('catalog-results-info');
+            if (!grid) return;
             
-            // Lakukan Filter Data (Mendukung filter barcode)
-            let filteredBooks = state.books.filter(book => {
-                const query = state.searchQuery.toLowerCase();
-                const matchesSearch = book.title.toLowerCase().includes(query) || 
-                                      book.author.toLowerCase().includes(query) ||
-                                      (book.barcode && book.barcode.toLowerCase().includes(query));
+            // Lakukan Filter Data
+            let filteredBooks = window.state.books.filter(book => {
+                const queryVal = window.state.searchQuery.toLowerCase();
+                const matchesSearch = book.title.toLowerCase().includes(queryVal) || 
+                                      book.author.toLowerCase().includes(queryVal) ||
+                                      (book.barcode && book.barcode.toLowerCase().includes(queryVal));
                 
-                const matchesCategory = state.activeCategoryFilter === 'Semua' || book.category === state.activeCategoryFilter;
+                const matchesCategory = window.state.activeCategoryFilter === 'Semua' || book.category === window.state.activeCategoryFilter;
                 
                 return matchesSearch && matchesCategory;
             });
 
-            // Tampilkan info pencarian
-            if (state.searchQuery || state.activeCategoryFilter !== 'Semua') {
-                resultsInfo.textContent = `Ditemukan ${filteredBooks.length} buku yang cocok`;
+            if (window.state.searchQuery || window.state.activeCategoryFilter !== 'Semua') {
+                if (resultsInfo) resultsInfo.textContent = `Ditemukan ${filteredBooks.length} buku yang cocok`;
             } else {
-                resultsInfo.textContent = `Menampilkan semua koleksi (${filteredBooks.length} buku)`;
+                if (resultsInfo) resultsInfo.textContent = `Menampilkan semua koleksi (${filteredBooks.length} buku)`;
             }
 
             if (filteredBooks.length === 0) {
                 grid.classList.add('hidden');
-                emptyState.classList.remove('hidden');
-                emptyState.classList.add('flex');
+                if (emptyState) {
+                    emptyState.classList.remove('hidden');
+                    emptyState.classList.add('flex');
+                }
             } else {
                 grid.classList.remove('hidden');
-                emptyState.classList.add('hidden');
-                emptyState.classList.remove('flex');
+                if (emptyState) {
+                    emptyState.classList.add('hidden');
+                    emptyState.classList.remove('flex');
+                }
                 
                 grid.innerHTML = '';
                 filteredBooks.forEach(book => {
-                    const isAvailable = book.availableStock > 0;
+                    const isAvailable = (parseInt(book.availableStock) || 0) > 0;
                     const statusTag = isAvailable 
                         ? `<span class="bg-emerald-50 text-emerald-700 text-[10px] font-bold px-2.5 py-1 rounded-full border border-emerald-100 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Tersedia</span>`
                         : `<span class="bg-rose-50 text-rose-700 text-[10px] font-bold px-2.5 py-1 rounded-full border border-rose-100 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> Habis</span>`;
 
-                    const coverColor = CATEGORY_COLORS[book.category] || "from-slate-500 to-slate-700";
-                    const coverIcon = CATEGORY_ICONS[book.category] || "book";
+                    const coverColor = window.CATEGORY_COLORS[book.category] || "from-slate-500 to-slate-700";
+                    const coverIcon = window.CATEGORY_ICONS[book.category] || "book";
 
                     grid.innerHTML += `
                         <div class="bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden flex flex-col h-full group">
-                            <!-- Cover Visual -->
                             <div class="relative bg-gradient-to-br ${coverColor} h-44 flex flex-col items-center justify-center p-4 text-white text-center cursor-pointer" onclick="openBookDetail('${book.id}')">
                                 <div class="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[1px]">
                                     <span class="bg-white/20 backdrop-blur-md px-3.5 py-1.5 rounded-lg text-xs font-bold border border-white/20">Buka Buku</span>
@@ -1325,7 +1357,6 @@
                                 <i data-lucide="${coverIcon}" class="w-10 h-10 mb-2 drop-shadow"></i>
                                 <h4 class="font-extrabold text-xs line-clamp-2 px-2 drop-shadow-sm">${book.title}</h4>
                             </div>
-                            <!-- Detail Info -->
                             <div class="p-5 flex-grow flex flex-col justify-between">
                                 <div class="space-y-2">
                                     <div class="flex items-center justify-between gap-2">
@@ -1334,7 +1365,7 @@
                                     </div>
                                     <h3 class="font-bold text-slate-900 text-sm leading-snug line-clamp-1 group-hover:text-indigo-600 cursor-pointer transition-colors" onclick="openBookDetail('${book.id}')">${book.title}</h3>
                                     <p class="text-[10px] text-indigo-600 font-mono font-bold tracking-wider flex items-center gap-1"><i data-lucide="barcode" class="w-3 h-3"></i> ${book.barcode || 'N/A'}</p>
-                                    <p class="text-xs text-slate-500 line-clamp-2 leading-relaxed">${book.desc}</p>
+                                    <p class="text-xs text-slate-500 line-clamp-2 leading-relaxed">${book.desc || ''}</p>
                                 </div>
                                 <div class="mt-4 pt-4 border-t border-slate-50 flex items-center justify-between text-xs">
                                     <span class="text-slate-400">Tersedia: <strong class="text-slate-700 font-semibold">${book.availableStock}/${book.totalStock}</strong></span>
@@ -1347,14 +1378,15 @@
                     `;
                 });
             }
-        }
+        };
 
-        // RENDER BUKU YANG SEDANG DIPINJAM (BUKU SAYA - Diperbarui agar Tombol Kembalikan Terproteksi Login Admin)
-        function renderMyLoans() {
+        // RENDER BUKU YANG SEDANG DIPINJAM (BUKU SAYA)
+        window.renderMyLoans = function() {
             const listContainer = document.getElementById('active-loans-list');
+            if (!listContainer) return;
             listContainer.innerHTML = '';
 
-            if (state.borrowedBooks.length === 0) {
+            if (window.state.borrowedBooks.length === 0) {
                 listContainer.innerHTML = `
                     <div class="bg-white p-10 rounded-2xl border border-slate-100 text-center flex flex-col items-center justify-center shadow-sm">
                         <div class="bg-slate-50 p-4 rounded-full text-slate-400 mb-4">
@@ -1368,14 +1400,13 @@
                 return;
             }
 
-            state.borrowedBooks.forEach(loan => {
-                const book = state.books.find(b => b.id === loan.bookId);
+            window.state.borrowedBooks.forEach(loan => {
+                const book = window.state.books.find(b => b.id === loan.bookId);
                 if (!book) return;
 
-                const coverColor = CATEGORY_COLORS[book.category] || "from-slate-500 to-slate-700";
-                const coverIcon = CATEGORY_ICONS[book.category] || "book";
+                const coverColor = window.CATEGORY_COLORS[book.category] || "from-slate-500 to-slate-700";
+                const coverIcon = window.CATEGORY_ICONS[book.category] || "book";
 
-                // Hitung sisa hari secara dinamis berdasarkan input user
                 const today = new Date();
                 today.setHours(0,0,0,0);
                 const dueDate = new Date(loan.dueDate);
@@ -1390,13 +1421,11 @@
                     limitBadge = `<span class="bg-amber-50 text-amber-700 text-xs font-bold px-3 py-1 rounded-full border border-amber-100 flex items-center gap-1 animate-pulse"><i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i> Jatuh Tempo Sisa ${diffDays} Hari</span>`;
                 }
 
-                // Badge Identitas Status Peminjam
                 const statusBadge = loan.borrowerStatus === "Guru"
                     ? `<span class="bg-purple-100 text-purple-700 text-[10px] font-bold px-2 py-0.5 rounded-lg flex items-center gap-1 border border-purple-200"><i data-lucide="briefcase" class="w-3 h-3"></i> Guru / Staf</span>`
                     : `<span class="bg-sky-100 text-sky-700 text-[10px] font-bold px-2 py-0.5 rounded-lg flex items-center gap-1 border border-sky-200"><i data-lucide="user" class="w-3 h-3"></i> Siswa (${loan.borrowerClass || 'N/A'})</span>`;
 
-                // PROTEKSI TOMBOL KEMBALIKAN BUKU (HANYA MUNCUL JIKA ADMIN LOGIN)
-                const returnActionHtml = state.isAdminLoggedIn
+                const returnActionHtml = window.state.isAdminLoggedIn
                     ? `<button onclick="returnBook('${book.id}')" class="bg-rose-50 hover:bg-rose-100 active:bg-rose-200 text-rose-600 text-xs font-bold px-4 py-2.5 rounded-xl transition-all flex items-center gap-1.5 w-full sm:w-auto justify-center">
                            <i data-lucide="arrow-down-left" class="w-4 h-4"></i> Kembalikan Buku
                        </button>`
@@ -1407,20 +1436,16 @@
                 listContainer.innerHTML += `
                     <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                         <div class="flex gap-4 items-center">
-                            <!-- Cover Mini -->
                             <div class="bg-gradient-to-br ${coverColor} w-16 h-20 rounded-xl flex items-center justify-center text-white shrink-0 shadow">
                                 <i data-lucide="${coverIcon}" class="w-6 h-6"></i>
                             </div>
                             <div>
                                 <span class="text-[10px] bg-slate-100 text-slate-500 px-2 py-0.5 rounded font-bold uppercase tracking-wider">${book.category}</span>
                                 <h4 class="font-bold text-slate-900 text-sm mt-1">${book.title}</h4>
-                                
-                                <!-- Identitas Lengkap Peminjam -->
                                 <div class="flex flex-wrap items-center gap-2 mt-1.5">
                                     <span class="text-xs text-slate-700 font-bold">Peminjam: <span class="underline">${loan.borrowerName}</span></span>
                                     ${statusBadge}
                                 </div>
-                                
                                 <p class="text-[10px] text-indigo-600 font-mono font-semibold tracking-wider flex items-center gap-1 mt-1"><i data-lucide="barcode" class="w-3 h-3"></i> Barcode: ${book.barcode}</p>
                                 <div class="flex flex-wrap items-center gap-3 mt-2 text-[10px] text-slate-400">
                                     <span>Dipinjam: <strong>${loan.borrowDate}</strong></span>
@@ -1435,103 +1460,100 @@
                     </div>
                 `;
             });
-        }
+        };
 
-        // OPEN DETAIL BUKU MODAL (Tampilkan Barcode Visual di Sini)
-        function openBookDetail(id) {
-            const book = state.books.find(b => b.id === id);
+        // OPEN DETAIL BUKU MODAL
+        window.openBookDetail = function(id) {
+            const book = window.state.books.find(b => b.id === id);
             if (!book) return;
 
             const modal = document.getElementById('book-detail-modal');
-            const isBorrowed = state.borrowedBooks.some(loan => loan.bookId === id);
+            if (!modal) return;
+            const isBorrowed = window.state.borrowedBooks.some(loan => loan.bookId === id);
 
             document.getElementById('modal-title').textContent = book.title;
             document.getElementById('modal-author').textContent = `Ditulis oleh: ${book.author}`;
             document.getElementById('modal-year').textContent = book.year;
             document.getElementById('modal-stock').textContent = `${book.availableStock} Buku`;
-            document.getElementById('modal-desc').textContent = book.desc;
+            document.getElementById('modal-desc').textContent = book.desc || '';
             
-            // Barcode text and visual stripes rendering
             const barcodeVal = book.barcode || book.id;
             document.getElementById('modal-barcode-text').textContent = barcodeVal;
             renderVisualBarcode(barcodeVal);
 
-            // Category setup
             const catEl = document.getElementById('modal-category');
-            catEl.textContent = book.category;
+            if (catEl) catEl.textContent = book.category;
             
-            // Cover setup
             const coverEl = document.getElementById('modal-cover');
-            const coverColor = CATEGORY_COLORS[book.category] || "from-slate-500 to-slate-700";
-            const coverIcon = CATEGORY_ICONS[book.category] || "book";
-            coverEl.className = `w-full md:w-48 h-64 rounded-xl flex flex-col items-center justify-center p-4 text-white text-center shadow-md relative overflow-hidden shrink-0 bg-gradient-to-br ${coverColor}`;
-            coverEl.innerHTML = `
-                <i data-lucide="${coverIcon}" class="w-16 h-16 mb-4 drop-shadow"></i>
-                <h4 class="font-extrabold text-base line-clamp-3 px-2 drop-shadow">${book.title}</h4>
-            `;
+            if (coverEl) {
+                const coverColor = window.CATEGORY_COLORS[book.category] || "from-slate-500 to-slate-700";
+                const coverIcon = window.CATEGORY_ICONS[book.category] || "book";
+                coverEl.className = `w-full md:w-48 h-64 rounded-xl flex flex-col items-center justify-center p-4 text-white text-center shadow-md relative overflow-hidden shrink-0 bg-gradient-to-br ${coverColor}`;
+                coverEl.innerHTML = `
+                    <i data-lucide="${coverIcon}" class="w-16 h-16 mb-4 drop-shadow"></i>
+                    <h4 class="font-extrabold text-base line-clamp-3 px-2 drop-shadow">${book.title}</h4>
+                `;
+            }
 
-            // Setup modal footer buttons
             const actionsEl = document.getElementById('modal-actions');
-            actionsEl.innerHTML = '';
-
-            if (isBorrowed) {
-                // Buku sudah dipinjam
-                actionsEl.innerHTML = `
-                    <button class="bg-emerald-100 text-emerald-800 text-xs font-bold px-4 py-2 rounded-xl cursor-default flex items-center gap-1">
-                        <i data-lucide="check" class="w-4 h-4"></i> Buku Sedang Anda Pinjam
-                    </button>
-                    <button onclick="closeBookDetailModal()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-5 py-2.5 rounded-xl transition-all">Tutup</button>
-                `;
-            } else if (book.availableStock <= 0) {
-                // Buku habis
-                actionsEl.innerHTML = `
-                    <button class="bg-rose-100 text-rose-800 text-xs font-bold px-4 py-2 rounded-xl cursor-default flex items-center gap-1">
-                        <i data-lucide="lock" class="w-4 h-4"></i> Stok Buku Sedang Habis
-                    </button>
-                    <button onclick="closeBookDetailModal()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold px-5 py-2.5 rounded-xl transition-all">Batal</button>
-                `;
-            } else {
-                // PROTEKSI FITUR PEMINJAMAN BUKU (HANYA BISA DIAKSES OLEH ADMIN)
-                if (state.isAdminLoggedIn) {
+            if (actionsEl) {
+                actionsEl.innerHTML = '';
+                if (isBorrowed) {
                     actionsEl.innerHTML = `
-                        <button onclick="closeBookDetailModal()" class="px-5 py-2.5 rounded-xl text-xs font-bold border border-slate-200 hover:bg-slate-50 transition-all">Batal</button>
-                        <button onclick="openBorrowFormModal('${book.id}')" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-5 py-2.5 rounded-xl transition-all shadow-md shadow-indigo-600/10 flex items-center gap-1.5">
-                            <i data-lucide="arrow-up-right" class="w-4 h-4"></i> Pinjam Buku Sekarang
+                        <button class="bg-emerald-100 text-emerald-800 text-xs font-bold px-4 py-2 rounded-xl cursor-default flex items-center gap-1">
+                            <i data-lucide="check" class="w-4 h-4"></i> Buku Sedang Anda Pinjam
                         </button>
-                    `;
-                } else {
-                    actionsEl.innerHTML = `
-                        <div class="text-xs text-slate-400 bg-slate-100 px-4 py-2.5 rounded-xl flex items-center gap-1.5 font-medium" title="Siswa/Guru tidak dapat meminjam mandiri. Harus diproses oleh pustakawan/admin SMAN 3 yang sudah login.">
-                            <i data-lucide="lock" class="w-4 h-4 text-slate-400"></i> Peminjaman via Pustakawan
-                        </div>
                         <button onclick="closeBookDetailModal()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-5 py-2.5 rounded-xl transition-all">Tutup</button>
                     `;
+                } else if ((parseInt(book.availableStock) || 0) <= 0) {
+                    actionsEl.innerHTML = `
+                        <button class="bg-rose-100 text-rose-800 text-xs font-bold px-4 py-2 rounded-xl cursor-default flex items-center gap-1">
+                            <i data-lucide="lock" class="w-4 h-4"></i> Stok Buku Sedang Habis
+                        </button>
+                        <button onclick="closeBookDetailModal()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold px-5 py-2.5 rounded-xl transition-all">Batal</button>
+                    `;
+                } else {
+                    if (window.state.isAdminLoggedIn) {
+                        actionsEl.innerHTML = `
+                            <button onclick="closeBookDetailModal()" class="px-5 py-2.5 rounded-xl text-xs font-bold border border-slate-200 hover:bg-slate-50 transition-all">Batal</button>
+                            <button onclick="openBorrowFormModal('${book.id}')" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-5 py-2.5 rounded-xl transition-all shadow-md shadow-indigo-600/10 flex items-center gap-1.5">
+                                <i data-lucide="arrow-up-right" class="w-4 h-4"></i> Pinjam Buku Sekarang
+                            </button>
+                        `;
+                    } else {
+                        actionsEl.innerHTML = `
+                            <div class="text-xs text-slate-400 bg-slate-100 px-4 py-2.5 rounded-xl flex items-center gap-1.5 font-medium" title="Siswa/Guru tidak dapat meminjam mandiri. Harus diproses oleh pustakawan/admin SMAN 3 yang sudah login.">
+                                <i data-lucide="lock" class="w-4 h-4 text-slate-400"></i> Peminjaman via Pustakawan
+                            </div>
+                            <button onclick="closeBookDetailModal()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-5 py-2.5 rounded-xl transition-all">Tutup</button>
+                        `;
+                    }
                 }
             }
 
             modal.classList.remove('hidden');
             lucide.createIcons();
-        }
+        };
 
-        function closeBookDetailModal() {
-            document.getElementById('book-detail-modal').classList.add('hidden');
-        }
+        window.closeBookDetailModal = function() {
+            const modal = document.getElementById('book-detail-modal');
+            if (modal) modal.classList.add('hidden');
+        };
 
         // --- MANAJEMEN MODAL PEMINJAMAN BARU ---
-
-        function openBorrowFormModal(bookId) {
-            // Pengaman tingkat fungsi jika diakses ilegal melalui konsol browser
-            if (!state.isAdminLoggedIn) {
+        window.openBorrowFormModal = function(bookId) {
+            if (!window.state.isAdminLoggedIn) {
                 showToast("Akses Ditolak! Formulir peminjaman hanya boleh diproses oleh Admin/Pustakawan yang sudah login.", "error");
                 return;
             }
 
-            closeBookDetailModal(); // Tutup detail modal terlebih dahulu
+            closeBookDetailModal();
 
-            document.getElementById('borrow-book-id').value = bookId;
-            document.getElementById('borrow-form').reset();
+            const formBookIdInput = document.getElementById('borrow-book-id');
+            const borrowForm = document.getElementById('borrow-form');
+            if (formBookIdInput) formBookIdInput.value = bookId;
+            if (borrowForm) borrowForm.reset();
 
-            // Set Tanggal Default (Hari ini dan 7 hari ke depan)
             const today = new Date();
             const nextWeek = new Date();
             nextWeek.setDate(today.getDate() + 7);
@@ -1548,26 +1570,30 @@
                 return [year, month, day].join('-');
             };
 
-            document.getElementById('borrow-date').value = formatDate(today);
-            document.getElementById('due-date').value = formatDate(nextWeek);
+            const borrowDateEl = document.getElementById('borrow-date');
+            const dueDateEl = document.getElementById('due-date');
+            if (borrowDateEl) borrowDateEl.value = formatDate(today);
+            if (dueDateEl) dueDateEl.value = formatDate(nextWeek);
 
-            // Trigger conditional field kelas
             toggleBorrowerStatusFields();
 
-            document.getElementById('borrow-form-modal').classList.remove('hidden');
+            const modal = document.getElementById('borrow-form-modal');
+            if (modal) modal.classList.remove('hidden');
             lucide.createIcons();
-        }
+        };
 
-        function closeBorrowFormModal() {
-            document.getElementById('borrow-form-modal').classList.add('hidden');
-        }
+        window.closeBorrowFormModal = function() {
+            const modal = document.getElementById('borrow-form-modal');
+            if (modal) modal.classList.add('hidden');
+        };
 
-        // Kondisional input Kelas jika Status == Siswa
-        function toggleBorrowerStatusFields() {
-            const status = document.getElementById('borrower-status').value;
+        window.toggleBorrowerStatusFields = function() {
+            const statusEl = document.getElementById('borrower-status');
             const classContainer = document.getElementById('borrower-class-container');
             const classInput = document.getElementById('borrower-class');
+            if (!statusEl || !classContainer || !classInput) return;
 
+            const status = statusEl.value;
             if (status === 'Siswa') {
                 classContainer.classList.remove('hidden');
                 classInput.required = true;
@@ -1576,22 +1602,14 @@
                 classInput.required = false;
                 classInput.value = '';
             }
-        }
+        };
 
-        // PROSES SUBMIT PEMINJAMAN BARU (DIPROTEKSI LOGIN ADMIN)
-        function handleBorrowFormSubmit(event) {
+        // INTEGRASI FIRESTORE: SUBMIT PEMINJAMAN BARU
+        window.handleBorrowFormSubmit = async function(event) {
             event.preventDefault();
 
-            // Pengaman tingkat fungsi jika formulir di-submit tanpa otorisasi
-            if (!state.isAdminLoggedIn) {
+            if (!window.state.isAdminLoggedIn) {
                 showToast("Akses Ditolak! Peminjaman hanya boleh diproses oleh Admin yang sudah login.", "error");
-                closeBorrowFormModal();
-                return;
-            }
-
-            // Batas maksimal meminjam
-            if (state.borrowedBooks.length >= 100) { // Limit sewa ditiadakan batas personal, melainkan kapasitas sistem
-                showToast("Batas maksimal peminjaman aktif terlampaui!", "error");
                 closeBorrowFormModal();
                 return;
             }
@@ -1603,108 +1621,126 @@
             const borrowDate = document.getElementById('borrow-date').value;
             const dueDate = document.getElementById('due-date').value;
 
-            // Validasi urutan tanggal
             if (new Date(borrowDate) > new Date(dueDate)) {
                 showToast("Tanggal kembali tidak boleh mendahului tanggal peminjaman!", "error");
                 return;
             }
 
-            const bookIndex = state.books.findIndex(b => b.id === bookId);
+            const bookIndex = window.state.books.findIndex(b => b.id === bookId);
             if (bookIndex === -1) return;
 
-            const book = state.books[bookIndex];
+            const book = window.state.books[bookIndex];
+            const currentAvailableStock = parseInt(book.availableStock) || 0;
 
-            if (book.availableStock > 0) {
-                // Kurangi stok di katalog
-                state.books[bookIndex].availableStock--;
+            if (currentAvailableStock > 0) {
+                const newAvailableStock = currentAvailableStock - 1;
 
-                // Daftarkan peminjaman beserta identitas lengkap peminjam
-                state.borrowedBooks.push({
-                    bookId: bookId,
-                    borrowDate: borrowDate,
-                    dueDate: dueDate,
-                    borrowerName: borrowerName,
-                    borrowerStatus: borrowerStatus,
-                    borrowerClass: borrowerStatus === 'Siswa' ? borrowerClass : ''
-                });
+                try {
+                    // Update stock buku di Firestore
+                    const bookDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'books', bookId);
+                    await updateDoc(bookDocRef, {
+                        availableStock: newAvailableStock
+                    });
 
-                // Tambahkan Riwayat / Log
-                const today = new Date();
-                const identityStr = borrowerStatus === 'Siswa' ? `${borrowerName} (${borrowerClass})` : `${borrowerName} (Guru)`;
-                state.logs.unshift({
-                    text: `Buku '${book.title}' sukses dipinjam oleh ${identityStr} (Didaftarkan oleh Admin).`,
-                    date: today.toLocaleDateString('id-ID', { month: 'short', day: 'numeric', year: 'numeric' }),
-                    type: 'borrow'
-                });
+                    // Tambah data peminjaman di Firestore
+                    const loanData = {
+                        bookId: bookId,
+                        borrowDate: borrowDate,
+                        dueDate: dueDate,
+                        borrowerName: borrowerName,
+                        borrowerStatus: borrowerStatus,
+                        borrowerClass: borrowerStatus === 'Siswa' ? borrowerClass : '',
+                        timestamp: new Date()
+                    };
+                    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'loans'), loanData);
 
-                closeBorrowFormModal();
-                updateAllViews();
-                showToast(`Sukses meminjam buku "${book.title}" untuk ${borrowerName}!`);
+                    // Tambah logs aktivitas di Firestore
+                    const identityStr = borrowerStatus === 'Siswa' ? `${borrowerName} (${borrowerClass})` : `${borrowerName} (Guru)`;
+                    const logData = {
+                        text: `Buku '${book.title}' sukses dipinjam oleh ${identityStr} (Didaftarkan oleh Admin).`,
+                        date: new Date().toLocaleDateString('id-ID', { month: 'short', day: 'numeric', year: 'numeric' }),
+                        type: 'borrow',
+                        timestamp: new Date()
+                    };
+                    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'logs'), logData);
+
+                    closeBorrowFormModal();
+                    showToast(`Sukses meminjam buku "${book.title}" untuk ${borrowerName}!`);
+                } catch (err) {
+                    console.error("Kesalahan menyimpan transaksi peminjaman ke Firestore:", err);
+                    showToast("Gagal menyimpan transaksi peminjaman ke Cloud Database.", "error");
+                }
             } else {
                 showToast("Stok buku tidak mencukupi.", "error");
             }
-        }
+        };
 
-        // OPERASI PENGEMBALIAN BUKU (DIPROTEKSI LOGIN ADMIN)
-        function returnBook(id) {
-            // Pengaman tingkat fungsi: Menghindari pemanggilan ilegal dari konsol browser
-            if (!state.isAdminLoggedIn) {
+        // INTEGRASI FIRESTORE: OPERASI PENGEMBALIAN BUKU
+        window.returnBook = async function(id) {
+            if (!window.state.isAdminLoggedIn) {
                 showToast("Akses Ditolak! Pengembalian buku hanya boleh divalidasi oleh Admin yang sudah login.", "error");
                 return;
             }
 
-            const loanIndex = state.borrowedBooks.findIndex(l => l.bookId === id);
-            if (loanIndex === -1) return;
+            const loan = window.state.borrowedBooks.find(l => l.bookId === id);
+            if (!loan) return;
 
-            const loan = state.borrowedBooks[loanIndex];
+            const book = window.state.books.find(b => b.id === id);
+            if (!book) return;
 
-            // Kembalikan stok buku
-            const bookIndex = state.books.findIndex(b => b.id === id);
-            if (bookIndex !== -1) {
-                state.books[bookIndex].availableStock++;
+            const newAvailableStock = (parseInt(book.availableStock) || 0) + 1;
+
+            try {
+                // Update stock buku di Firestore
+                const bookDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'books', id);
+                await updateDoc(bookDocRef, {
+                    availableStock: newAvailableStock
+                });
+
+                // Hapus data peminjaman di Firestore
+                const loanDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'loans', loan.id);
+                await deleteDoc(loanDocRef);
+
+                // Tambah logs aktivitas di Firestore
+                const identityStr = loan.borrowerStatus === 'Siswa' ? `${loan.borrowerName} (${loan.borrowerClass})` : `${loan.borrowerName} (Guru)`;
+                const logData = {
+                    text: `Buku '${book.title}' yang dipinjam oleh ${identityStr} telah dikembalikan dan divalidasi oleh Admin.`,
+                    date: new Date().toLocaleDateString('id-ID', { month: 'short', day: 'numeric', year: 'numeric' }),
+                    type: 'return',
+                    timestamp: new Date()
+                };
+                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'logs'), logData);
+
+                showToast(`Buku "${book.title}" berhasil dikembalikan dan diverifikasi!`);
+            } catch (err) {
+                console.error("Kesalahan menghapus transaksi peminjaman di Firestore:", err);
+                showToast("Gagal memproses pengembalian buku ke Cloud Database.", "error");
             }
-
-            const book = state.books[bookIndex];
-            state.borrowedBooks.splice(loanIndex, 1);
-
-            // Tambah Log
-            const today = new Date();
-            const identityStr = loan.borrowerStatus === 'Siswa' ? `${loan.borrowerName} (${loan.borrowerClass})` : `${loan.borrowerName} (Guru)`;
-            state.logs.unshift({
-                text: `Buku '${book.title}' yang dipinjam oleh ${identityStr} telah dikembalikan dan diverifikasi oleh Admin.`,
-                date: today.toLocaleDateString('id-ID', { month: 'short', day: 'numeric', year: 'numeric' }),
-                type: 'return'
-            });
-
-            updateAllViews();
-            showToast(`Buku "${book.title}" berhasil dikembalikan dan diverifikasi!`);
-        }
+        };
 
         // --- MANAJEMEN MODAL KELOLA KATEGORI ---
-
-        function openCategoryModal() {
-            document.getElementById('category-modal').classList.remove('hidden');
+        window.openCategoryModal = function() {
+            const modal = document.getElementById('category-modal');
+            if (modal) modal.classList.remove('hidden');
             renderCategoryList();
             lucide.createIcons();
-        }
+        };
 
-        function closeCategoryModal() {
-            document.getElementById('category-modal').classList.add('hidden');
-            document.getElementById('new-category-input').value = '';
-        }
+        window.closeCategoryModal = function() {
+            const modal = document.getElementById('category-modal');
+            if (modal) modal.classList.add('hidden');
+            const input = document.getElementById('new-category-input');
+            if (input) input.value = '';
+        };
 
         // RENDER DAFTAR KATEGORI DI MODAL MANAJEMEN
-        function renderCategoryList() {
+        window.renderCategoryList = function() {
             const container = document.getElementById('category-list-container');
+            if (!container) return;
             container.innerHTML = '';
 
-            state.categories.forEach(cat => {
-                // Hitung jumlah buku dengan kategori ini
-                const bookCount = state.books.filter(b => b.category === cat).length;
-                
-                // Cek apakah ini kategori bawaan (opsional proteksi)
-                const isDefaultCategory = ['Buku Pelajaran', 'Fiksi', 'Sains', 'Teknologi', 'Bisnis & Keuangan', 'Sejarah', 'Sastra'].includes(cat);
-
+            window.state.categories.forEach(cat => {
+                const bookCount = window.state.books.filter(b => b.category === cat).length;
                 container.innerHTML += `
                     <div class="flex items-center justify-between bg-slate-50 px-4 py-2.5 rounded-xl border border-slate-100">
                         <div class="flex items-center gap-2">
@@ -1720,103 +1756,105 @@
                     </div>
                 `;
             });
-        }
+        };
 
-        // TAMBAH KATEGORI BARU
-        function handleCategoryFormSubmit(event) {
+        // INTEGRASI FIRESTORE: TAMBAH KATEGORI BARU
+        window.handleCategoryFormSubmit = async function(event) {
             event.preventDefault();
             const input = document.getElementById('new-category-input');
+            if (!input) return;
             const newCat = input.value.trim();
 
             if (!newCat) return;
 
-            // Validasi duplikasi (tidak peka huruf besar-kecil)
-            const isExist = state.categories.some(cat => cat.toLowerCase() === newCat.toLowerCase());
+            const isExist = window.state.categories.some(cat => cat.toLowerCase() === newCat.toLowerCase());
             if (isExist) {
                 showToast(`Kategori "${newCat}" sudah tersedia di sistem!`, "error");
                 return;
             }
 
-            // Tambahkan kategori baru
-            state.categories.push(newCat);
-            showToast(`Kategori kustom "${newCat}" berhasil ditambahkan!`);
-            
-            // Log aktivitas
-            const today = new Date();
-            state.logs.unshift({
-                text: `Kategori kustom baru "${newCat}" berhasil ditambahkan ke pustaka SMAN 3.`,
-                date: today.toLocaleDateString('id-ID', { month: 'short', day: 'numeric', year: 'numeric' }),
-                type: 'system'
-            });
+            try {
+                // Simpan kategori baru di Firestore
+                const categoryDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'categories', newCat);
+                await setDoc(categoryDocRef, { name: newCat, timestamp: new Date() });
 
-            input.value = '';
-            renderCategoryList();
-            updateAllViews();
-        }
+                // Simpan log di Firestore
+                const logData = {
+                    text: `Kategori kustom baru "${newCat}" berhasil ditambahkan ke pustaka SMAN 3.`,
+                    date: new Date().toLocaleDateString('id-ID', { month: 'short', day: 'numeric', year: 'numeric' }),
+                    type: 'system',
+                    timestamp: new Date()
+                };
+                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'logs'), logData);
 
-        // HAPUS KATEGORI
-        function handleDeleteCategory(categoryName) {
-            // Cek apakah ada buku aktif yang menggunakan kategori ini
-            const isAssigned = state.books.some(book => book.category === categoryName);
+                input.value = '';
+                showToast(`Kategori kustom "${newCat}" berhasil ditambahkan!`);
+            } catch (err) {
+                console.error("Gagal menambahkan kategori ke Firestore:", err);
+                showToast("Gagal menyimpan kategori ke Cloud Database.", "error");
+            }
+        };
+
+        // INTEGRASI FIRESTORE: HAPUS KATEGORI
+        window.handleDeleteCategory = async function(categoryName) {
+            const isAssigned = window.state.books.some(book => book.category === categoryName);
             if (isAssigned) {
                 showToast(`Gagal! Kategori "${categoryName}" sedang digunakan oleh beberapa buku di inventaris.`, "error");
                 return;
             }
 
-            // Proses penghapusan
-            const index = state.categories.indexOf(categoryName);
-            if (index !== -1) {
-                state.categories.splice(index, 1);
-                showToast(`Kategori "${categoryName}" berhasil dihapus.`);
-                
-                // Atur ulang filter katalog jika filter aktif yang dihapus
-                if (state.activeCategoryFilter === categoryName) {
-                    state.activeCategoryFilter = 'Semua';
+            try {
+                // Hapus kategori di Firestore
+                const categoryDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'categories', categoryName);
+                await deleteDoc(categoryDocRef);
+
+                // Tambah log di Firestore
+                const logData = {
+                    text: `Kategori "${categoryName}" telah dihapus dari pustaka SMAN 3.`,
+                    date: new Date().toLocaleDateString('id-ID', { month: 'short', day: 'numeric', year: 'numeric' }),
+                    type: 'system',
+                    timestamp: new Date()
+                };
+                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'logs'), logData);
+
+                if (window.state.activeCategoryFilter === categoryName) {
+                    window.state.activeCategoryFilter = 'Semua';
                 }
 
-                const today = new Date();
-                state.logs.unshift({
-                    text: `Kategori "${categoryName}" telah dihapus dari pustaka SMAN 3.`,
-                    date: today.toLocaleDateString('id-ID', { month: 'short', day: 'numeric', year: 'numeric' }),
-                    type: 'system'
-                });
-
-                renderCategoryList();
-                updateAllViews();
+                showToast(`Kategori "${categoryName}" berhasil dihapus.`);
+            } catch (err) {
+                console.error("Gagal menghapus kategori di Firestore:", err);
+                showToast("Gagal menghapus kategori dari Cloud Database.", "error");
             }
-        }
+        };
 
         // RENDER OPSI DROPDOWN FORM TAMBAH BUKU (DINAMIS)
-        function renderCategorySelectOptions() {
+        window.renderCategorySelectOptions = function() {
             const select = document.getElementById('form-category');
             if (!select) return;
 
             select.innerHTML = '';
-            state.categories.forEach(cat => {
+            window.state.categories.forEach(cat => {
                 select.innerHTML += `<option value="${cat}">${cat}</option>`;
             });
-        }
+        };
 
-        // FITUR EXPORT EXCEL/CSV DENGAN ENKAPSULASI TANDA KUTIP AMAN
-        function exportToExcel() {
-            const books = state.books;
+        // FITUR EXPORT EXCEL/CSV
+        window.exportToExcel = function() {
+            const books = window.state.books;
             
             if (books.length === 0) {
                 showToast("Tidak ada data buku yang bisa diunduh saat ini.", "error");
                 return;
             }
 
-            // Tambahkan UTF-8 BOM agar terbaca rapi saat diimpor/dibuka di Microsoft Excel
             let csvContent = "\uFEFF"; 
-            
-            // Header Baris Pertama
             csvContent += "ID Buku,Barcode,Judul Buku,Penulis,Kategori,Tahun Terbit,Stok Tersedia,Total Stok,Sinopsis\n";
             
-            // Pengisian Data Baris Demi Baris
             books.forEach(book => {
                 const cleanDesc = (book.desc || "")
-                    .replace(/"/g, '""')       // Escape tanda kutip ganda (Standard CSV)
-                    .replace(/\n/g, ' ')       // Hilangkan jeda baris agar tidak merusak sel
+                    .replace(/"/g, '""')       
+                    .replace(/\n/g, ' ')       
                     .replace(/\r/g, ' ');
 
                 const row = [
@@ -1830,11 +1868,9 @@
                     book.totalStock,
                     `"${cleanDesc}"`
                 ];
-                
                 csvContent += row.join(",") + "\n";
             });
 
-            // Pembuatan blob file & trigger download
             try {
                 const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
                 const url = URL.createObjectURL(blob);
@@ -1853,11 +1889,11 @@
             } catch (err) {
                 showToast("Terjadi kesalahan saat mengunduh berkas.", "error");
             }
-        }
+        };
 
-        // FITUR UNGGAH TEMPLATE KOLEKSI BUKU (CSV) DINAMIS (Telah Diperbaiki)
-        function handleExcelUpload(event) {
-            const file = event.target.files; // Diperbaiki: mengambil objek file pertama, bukan kumpulan file list
+        // FITUR UNGGAH TEMPLATE KOLEKSI BUKU (CSV) DINAMIS
+        window.handleExcelUpload = function(event) {
+            const file = event.target.files; 
             if (!file) return;
 
             const reader = new FileReader();
@@ -1866,25 +1902,20 @@
                 processCSVData(text);
             };
             reader.readAsText(file, "UTF-8");
-            
-            // Reset input agar file yang sama bisa diunggah ulang
             event.target.value = '';
-        }
+        };
 
-        // PEMROSES UTAMA PARSING CSV / TEMPLATE (Telah Diperbaiki)
-        function processCSVData(csvText) {
-            // Bersihkan baris kosong dan split berdasarkan ganti baris (\n atau \r\n)
+        // PEMROSES UTAMA PARSING CSV / TEMPLATE
+        window.processCSVData = async function(csvText) {
             const lines = csvText.split(/\r?\n/).filter(line => line.trim() !== "");
             if (lines.length < 2) {
                 showToast("Gagal! File CSV kosong atau tidak memiliki data yang valid.", "error");
                 return;
             }
 
-            // Parsing Header Baris Pertama
-            const header = parseCSVRow(lines); // Diperbaiki: mem-parsing baris pertama (index 0) dari kumpulan baris, bukan seluruh array
+            const header = parseCSVRow(lines); 
             const requiredColumns = ["ID Buku", "Barcode", "Judul Buku", "Penulis", "Kategori", "Tahun Terbit", "Stok Tersedia", "Total Stok", "Sinopsis"];
             
-            // Validasi kecocokan kolom dengan template unduhan SMAN 3
             const isValidTemplate = requiredColumns.every((col, index) => header[index] && header[index].trim().replace(/^\uFEFF/, '') === col);
             if (!isValidTemplate) {
                 showToast("Format kolom tidak sesuai dengan template! Silakan unduh template melalui tombol 'Unduh Laporan Excel'.", "error");
@@ -1894,75 +1925,73 @@
             let importCount = 0;
             let updateCount = 0;
 
-            // Proses baris data mulai dari baris ke-2
-            for (let i = 1; i < lines.length; i++) {
-                const cols = parseCSVRow(lines[i]);
-                if (cols.length < requiredColumns.length) continue; // Skip baris tidak lengkap
+            try {
+                for (let i = 1; i < lines.length; i++) {
+                    const cols = parseCSVRow(lines[i]);
+                    if (cols.length < requiredColumns.length) continue; 
 
-                // Diperbaiki: Mengambil data berbasis indeks array cols yang tepat
-                const id = cols ? cols.trim() : "";
-                const barcode = cols ? cols.trim() : "";
-                const title = cols ? cols.trim() : "";
-                const author = cols ? cols.trim() : "";
-                const category = cols ? cols.trim() : "";
-                const year = parseInt(cols) || new Date().getFullYear();
-                const availableStock = parseInt(cols) || 1;
-                const totalStock = parseInt(cols) || 1;
-                const desc = cols ? cols.trim() : "";
+                    const id = cols ? cols.trim() : "";
+                    const barcode = cols ? cols.trim() : "";
+                    const title = cols ? cols.trim() : "";
+                    const author = cols ? cols.trim() : "";
+                    const category = cols ? cols.trim() : "";
+                    const year = parseInt(cols) || new Date().getFullYear();
+                    const availableStock = parseInt(cols) || 1;
+                    const totalStock = parseInt(cols) || 1;
+                    const desc = cols ? cols.trim() : "";
 
-                if (!title || !category) continue; // Skip jika judul atau kategori kosong
+                    if (!title || !category) continue; 
 
-                // Jika kategori baru terdeteksi dalam file, tambahkan otomatis ke state categories dinamis
-                if (category && !state.categories.some(cat => cat.toLowerCase() === category.toLowerCase())) {
-                    state.categories.push(category);
-                }
+                    // Tambah Kategori baru otomatis di Firestore jika belum ada
+                    if (category && !window.state.categories.some(cat => cat.toLowerCase() === category.toLowerCase())) {
+                        const categoryDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'categories', category);
+                        await setDoc(categoryDocRef, { name: category, timestamp: new Date() });
+                    }
 
-                // Cek apakah buku dengan ID atau Barcode ini sudah ada di database perpustakaan
-                const existingBookIndex = state.books.findIndex(b => b.id === id || (b.barcode && barcode !== "-" && b.barcode === barcode));
-
-                if (existingBookIndex !== -1) {
-                    // Jika sudah ada, lakukan update / upsert stok dan info
-                    state.books[existingBookIndex].title = title;
-                    state.books[existingBookIndex].barcode = barcode !== "-" ? barcode : "";
-                    state.books[existingBookIndex].author = author;
-                    state.books[existingBookIndex].category = category;
-                    state.books[existingBookIndex].year = year;
-                    state.books[existingBookIndex].totalStock = totalStock;
-                    state.books[existingBookIndex].availableStock = availableStock;
-                    state.books[existingBookIndex].desc = desc;
-                    updateCount++;
-                } else {
-                    // Jika belum ada, buat entri buku baru di sistem
-                    const finalId = id && id !== "-" ? id : `PC-0${state.books.length + 1}`;
-                    state.books.push({
+                    const finalId = id && id !== "-" ? id : `PC-0${window.state.books.length + 1}`;
+                    const bookDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'books', finalId);
+                    
+                    const bookData = {
                         id: finalId,
                         barcode: barcode !== "-" ? barcode : "",
-                        title,
-                        author,
-                        category,
-                        year,
-                        desc,
-                        totalStock,
-                        availableStock
-                    });
-                    importCount++;
+                        title: title,
+                        author: author,
+                        category: category,
+                        year: year,
+                        totalStock: totalStock,
+                        availableStock: availableStock,
+                        desc: desc,
+                        timestamp: new Date()
+                    };
+
+                    await setDoc(bookDocRef, bookData);
+                    
+                    const existingBook = window.state.books.some(b => b.id === finalId);
+                    if (existingBook) {
+                        updateCount++;
+                    } else {
+                        importCount++;
+                    }
                 }
+
+                // Simpan log ke Firestore
+                const logData = {
+                    text: `Unggah massal berhasil: ${importCount} buku baru ditambahkan, ${updateCount} buku diperbarui.`,
+                    date: new Date().toLocaleDateString('id-ID', { month: 'short', day: 'numeric', year: 'numeric' }),
+                    type: 'system',
+                    timestamp: new Date()
+                };
+                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'logs'), logData);
+                
+                showToast(`Berhasil! ${importCount} buku ditambahkan, ${updateCount} buku diperbarui.`, "success");
+            } catch (err) {
+                console.error("Gagal mengunggah file CSV massal ke Firestore:", err);
+                showToast("Gagal menyimpan beberapa data unggahan ke Cloud Database.", "error");
             }
+        };
 
-            // Log aktivitas ke riwayat log admin
-            const today = new Date();
-            state.logs.unshift({
-                text: `Unggah massal berhasil: ${importCount} buku baru ditambahkan, ${updateCount} buku diperbarui.`,
-                date: today.toLocaleDateString('id-ID', { month: 'short', day: 'numeric', year: 'numeric' }),
-                type: 'system'
-            });
-
-            updateAllViews();
-            showToast(`Berhasil! ${importCount} buku ditambahkan, ${updateCount} buku diperbarui.`, "success");
-        }
-
-        // FUNGSI UTILITY PARSING KELAS DATA CSV (Mendukung Tanda Kutip Ganda dan Koma)
-        function parseCSVRow(text) {
+        // UTILITY PARSING CSV
+        window.parseCSVRow = function(text) {
             const result = [];
             let inQuotes = false;
             let token = "";
@@ -1971,10 +2000,9 @@
                 const char = text[i];
                 
                 if (char === '"') {
-                    // Handle Quote Escaping
                     if (inQuotes && text[i + 1] === '"') {
                         token += '"';
-                        i++; // Skip the escaped quote
+                        i++; 
                     } else {
                         inQuotes = !inQuotes;
                     }
@@ -1987,58 +2015,62 @@
             }
             result.push(token);
             return result;
-        }
+        };
 
         // --- MANAJEMEN MODAL BIODATA ---
-        function openBioModal() {
-            document.getElementById('bio-modal').classList.remove('hidden');
+        window.openBioModal = function() {
+            const modal = document.getElementById('bio-modal');
+            if (modal) modal.classList.remove('hidden');
             lucide.createIcons();
-        }
+        };
 
-        function closeBioModal() {
-            document.getElementById('bio-modal').classList.add('hidden');
-        }
+        window.closeBioModal = function() {
+            const modal = document.getElementById('bio-modal');
+            if (modal) modal.classList.add('hidden');
+        };
 
         // --- LOGIKA AUTENTIKASI ADMIN ---
-        function handleAdminLogin(event) {
+        window.handleAdminLogin = function(event) {
             event.preventDefault();
             const usernameInput = document.getElementById('admin-username').value.trim();
             const passwordInput = document.getElementById('admin-password').value;
 
-            // Validasi Kredensial (Admin / 123456)
             if (usernameInput === "Admin" && passwordInput === "123456") {
-                state.isAdminLoggedIn = true;
+                window.state.isAdminLoggedIn = true;
                 
-                // Animasi Transisi Tampilan Panel Admin
-                document.getElementById('admin-login-view').classList.add('hidden');
-                document.getElementById('admin-main-view').classList.remove('hidden');
+                const loginView = document.getElementById('admin-login-view');
+                const mainView = document.getElementById('admin-main-view');
+                if (loginView) loginView.classList.add('hidden');
+                if (mainView) mainView.classList.remove('hidden');
                 
                 showToast("Autentikasi Berhasil! Selamat datang Kembali.", "success");
-                updateAllViews();
+                window.updateAllViews();
             } else {
                 showToast("Username atau Password yang Anda masukkan salah!", "error");
             }
-        }
+        };
 
-        // LOGOUT ADMIN (Sekaligus mengunci kembali fungsionalitas peminjaman & pengembalian buku)
-        function handleAdminLogout() {
-            state.isAdminLoggedIn = false;
+        window.handleAdminLogout = function() {
+            window.state.isAdminLoggedIn = false;
             
-            // Animasi Transisi Tampilan Panel Admin
-            document.getElementById('admin-login-view').classList.remove('hidden');
-            document.getElementById('admin-main-view').classList.add('hidden');
+            const loginView = document.getElementById('admin-login-view');
+            const mainView = document.getElementById('admin-main-view');
+            if (loginView) loginView.classList.remove('hidden');
+            if (mainView) mainView.classList.add('hidden');
             
-            // Reset input login
-            document.getElementById('admin-username').value = '';
-            document.getElementById('admin-password').value = '';
+            const usernameInput = document.getElementById('admin-username');
+            const passwordInput = document.getElementById('admin-password');
+            if (usernameInput) usernameInput.value = '';
+            if (passwordInput) passwordInput.value = '';
             
             showToast("Anda telah keluar dari sistem Panel Admin.", "success");
-            updateAllViews(); // Update views agar tombol pinjam/kembalikan buku terkunci kembali
-        }
+            window.updateAllViews(); 
+        };
 
-        function togglePasswordVisibility() {
+        window.togglePasswordVisibility = function() {
             const passwordInput = document.getElementById('admin-password');
             const eyeIcon = document.getElementById('eye-icon');
+            if (!passwordInput || !eyeIcon) return;
             
             if (passwordInput.type === 'password') {
                 passwordInput.type = 'text';
@@ -2048,32 +2080,34 @@
                 eyeIcon.setAttribute('data-lucide', 'eye');
             }
             lucide.createIcons();
-        }
+        };
 
 
         // --- MANAJEMEN INVENTARIS ADMIN ---
+        const adminSearchEl = document.getElementById('admin-search-input');
+        if (adminSearchEl) {
+            adminSearchEl.addEventListener('input', (e) => {
+                window.state.adminSearchQuery = e.target.value;
+                renderAdminInventory();
+                lucide.createIcons();
+            });
+        }
 
-        // FILTER INVENTARIS REALTIME DI ADMIN (Pencarian mendukung Barcode)
-        document.getElementById('admin-search-input').addEventListener('input', (e) => {
-            state.adminSearchQuery = e.target.value;
-            renderAdminInventory();
-            lucide.createIcons();
-        });
-
-        function renderAdminInventory() {
+        window.renderAdminInventory = function() {
             const tbody = document.getElementById('admin-books-table');
+            if (!tbody) return;
             tbody.innerHTML = '';
 
-            let filteredBooks = state.books.filter(book => {
-                const query = state.adminSearchQuery.toLowerCase();
-                return book.title.toLowerCase().includes(query) || 
-                       book.author.toLowerCase().includes(query) ||
-                       book.category.toLowerCase().includes(query) ||
-                       (book.barcode && book.barcode.toLowerCase().includes(query));
+            let filteredBooks = window.state.books.filter(book => {
+                const queryVal = window.state.adminSearchQuery.toLowerCase();
+                return book.title.toLowerCase().includes(queryVal) || 
+                       book.author.toLowerCase().includes(queryVal) ||
+                       book.category.toLowerCase().includes(queryVal) ||
+                       (book.barcode && book.barcode.toLowerCase().includes(queryVal));
             });
 
             filteredBooks.forEach(book => {
-                const isOutOfStock = book.availableStock === 0;
+                const isOutOfStock = (parseInt(book.availableStock) || 0) === 0;
                 const statusBadge = isOutOfStock
                     ? `<span class="bg-rose-50 text-rose-600 px-2.5 py-1 rounded-full text-xs font-bold border border-rose-100 flex items-center gap-1 w-fit"><span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> Kosong</span>`
                     : `<span class="bg-emerald-50 text-emerald-600 px-2.5 py-1 rounded-full text-xs font-bold border border-emerald-100 flex items-center gap-1 w-fit"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Aktif</span>`;
@@ -2082,8 +2116,8 @@
                     <tr class="hover:bg-slate-50 transition-colors">
                         <td class="py-4 px-6">
                             <div class="flex items-center gap-3">
-                                <div class="bg-gradient-to-br ${CATEGORY_COLORS[book.category] || "from-slate-400 to-slate-600"} w-9 h-11 rounded-lg flex items-center justify-center text-white font-extrabold text-[8px] shrink-0">
-                                    <i data-lucide="${CATEGORY_ICONS[book.category] || 'book'}" class="w-4 h-4"></i>
+                                <div class="bg-gradient-to-br ${window.CATEGORY_COLORS[book.category] || "from-slate-400 to-slate-600"} w-9 h-11 rounded-lg flex items-center justify-center text-white font-extrabold text-[8px] shrink-0">
+                                    <i data-lucide="${window.CATEGORY_ICONS[book.category] || 'book'}" class="w-4 h-4"></i>
                                 </div>
                                 <div>
                                     <h4 class="font-bold text-slate-800 line-clamp-1">${book.title}</h4>
@@ -2111,139 +2145,244 @@
                     </tr>
                 `;
             });
-        }
+        };
 
-        // BUKA MODAL FORM ADD BUKU (Lengkap render pilihan kategori)
-        function openAddBookModal() {
-            document.getElementById('admin-modal-title').textContent = "Tambah Koleksi Buku Baru";
-            document.getElementById('book-form').reset();
-            document.getElementById('form-book-id').value = '';
-            renderCategorySelectOptions(); // Pastikan opsi terbaru ter-render
-            document.getElementById('add-book-modal').classList.remove('hidden');
-        }
+        // BUKA FORM ADD BUKU
+        window.openAddBookModal = function() {
+            const modalTitle = document.getElementById('admin-modal-title');
+            const form = document.getElementById('book-form');
+            const formIdInput = document.getElementById('form-book-id');
+            const modal = document.getElementById('add-book-modal');
 
-        // BUKA MODAL FORM EDIT BUKU (Isi field barcode & render pilihan kategori)
-        function openEditBookModal(id) {
-            const book = state.books.find(b => b.id === id);
+            if (modalTitle) modalTitle.textContent = "Tambah Koleksi Buku Baru";
+            if (form) form.reset();
+            if (formIdInput) formIdInput.value = '';
+            
+            renderCategorySelectOptions(); 
+            if (modal) modal.classList.remove('hidden');
+        };
+
+        // BUKA FORM EDIT BUKU
+        window.openEditBookModal = function(id) {
+            const book = window.state.books.find(b => b.id === id);
             if (!book) return;
 
-            document.getElementById('admin-modal-title').textContent = "Ubah Rincian Koleksi Buku";
-            document.getElementById('form-book-id').value = book.id;
-            document.getElementById('form-title').value = book.title;
-            document.getElementById('form-barcode').value = book.barcode || '';
-            document.getElementById('form-author').value = book.author;
+            const modalTitle = document.getElementById('admin-modal-title');
+            const formIdInput = document.getElementById('form-book-id');
+            const titleInput = document.getElementById('form-title');
+            const barcodeInput = document.getElementById('form-barcode');
+            const authorInput = document.getElementById('form-author');
+            const categorySelect = document.getElementById('form-category');
+            const yearInput = document.getElementById('form-year');
+            const stockInput = document.getElementById('form-stock');
+            const descInput = document.getElementById('form-desc');
+            const modal = document.getElementById('add-book-modal');
+
+            if (modalTitle) modalTitle.textContent = "Ubah Rincian Koleksi Buku";
+            if (formIdInput) formIdInput.value = book.id;
+            if (titleInput) titleInput.value = book.title;
+            if (barcodeInput) barcodeInput.value = book.barcode || '';
+            if (authorInput) authorInput.value = book.author;
             
-            renderCategorySelectOptions(); // Pastikan opsi terbaru ter-render
-            document.getElementById('form-category').value = book.category;
+            renderCategorySelectOptions(); 
+            if (categorySelect) categorySelect.value = book.category;
             
-            document.getElementById('form-year').value = book.year;
-            document.getElementById('form-stock').value = book.totalStock;
-            document.getElementById('form-desc').value = book.desc;
+            if (yearInput) yearInput.value = book.year;
+            if (stockInput) stockInput.value = book.totalStock;
+            if (descInput) descInput.value = book.desc || '';
 
-            document.getElementById('add-book-modal').classList.remove('hidden');
-        }
+            if (modal) modal.classList.remove('hidden');
+        };
 
-        // TUTUP MODAL ADD/EDIT BUKU
-        function closeAddBookModal() {
-            document.getElementById('add-book-modal').classList.add('hidden');
-        }
+        window.closeAddBookModal = function() {
+            const modal = document.getElementById('add-book-modal');
+            if (modal) modal.classList.add('hidden');
+        };
 
-        // FORM SUBMISSION UNTUK EDIT / TAMBAH (Simpan barcode)
-        function handleBookFormSubmit(event) {
+        // INTEGRASI FIRESTORE: SUBMIT TAMBAH ATAU EDIT BUKU
+        window.handleBookFormSubmit = async function(event) {
             event.preventDefault();
 
             const id = document.getElementById('form-book-id').value;
-            const title = document.getElementById('form-title').value;
+            const title = document.getElementById('form-title').value.trim();
             const barcode = document.getElementById('form-barcode').value.trim();
-            const author = document.getElementById('form-author').value;
+            const author = document.getElementById('form-author').value.trim();
             const category = document.getElementById('form-category').value;
             const year = parseInt(document.getElementById('form-year').value);
             const totalStock = parseInt(document.getElementById('form-stock').value);
-            const desc = document.getElementById('form-desc').value;
+            const desc = document.getElementById('form-desc').value.trim();
 
-            // Validasi duplikasi barcode pada buku lain
-            const isBarcodeExist = state.books.some(b => b.barcode === barcode && b.id !== id);
-            if (isBarcodeExist) {
+            const isBarcodeExist = window.state.books.some(b => b.barcode === barcode && b.id !== id);
+            if (barcode && isBarcodeExist) {
                 showToast("Gagal! Kode barcode \"" + barcode + "\" sudah terdaftar pada buku lain.", "error");
                 return;
             }
 
-            if (id) {
-                // Proses Update Edit Buku
-                const index = state.books.findIndex(b => b.id === id);
-                if (index !== -1) {
-                    const diffStock = totalStock - state.books[index].totalStock;
-                    state.books[index].title = title;
-                    state.books[index].barcode = barcode;
-                    state.books[index].author = author;
-                    state.books[index].category = category;
-                    state.books[index].year = year;
-                    state.books[index].totalStock = totalStock;
-                    // Sesuaikan sisa stok tersedia secara logis
-                    state.books[index].availableStock = Math.max(0, state.books[index].availableStock + diffStock);
-                    state.books[index].desc = desc;
+            try {
+                if (id) {
+                    // Update Buku lama di Firestore
+                    const existingBook = window.state.books.find(b => b.id === id);
+                    const diffStock = totalStock - (parseInt(existingBook.totalStock) || 0);
+                    const updatedAvailableStock = Math.max(0, (parseInt(existingBook.availableStock) || 0) + diffStock);
 
+                    const bookDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'books', id);
+                    await updateDoc(bookDocRef, {
+                        title: title,
+                        barcode: barcode,
+                        author: author,
+                        category: category,
+                        year: year,
+                        totalStock: totalStock,
+                        availableStock: updatedAvailableStock,
+                        desc: desc
+                    });
                     showToast("Data buku \"" + title + "\" berhasil diperbarui.");
+                } else {
+                    // Simpan Buku baru di Firestore
+                    const newId = "PC-" + Math.floor(1000 + Math.random() * 9000); 
+                    const bookDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'books', newId);
+                    
+                    await setDoc(bookDocRef, {
+                        id: newId,
+                        barcode: barcode,
+                        title: title,
+                        author: author,
+                        category: category,
+                        year: year,
+                        totalStock: totalStock,
+                        availableStock: totalStock,
+                        desc: desc,
+                        timestamp: new Date()
+                    });
+                    showToast("Buku \"" + title + "\" berhasil ditambahkan ke katalog.");
                 }
-            } else {
-                // Proses Buku Baru
-                const newId = "PC-0" + (state.books.length + 1);
-                state.books.push({
-                    id: newId,
-                    barcode: barcode,
-                    title,
-                    author,
-                    category,
-                    year,
-                    desc,
-                    totalStock,
-                    availableStock: totalStock
-                });
 
-                showToast("Buku \"" + title + "\" berhasil ditambahkan ke katalog.");
+                closeAddBookModal();
+            } catch (err) {
+                console.error("Gagal menyimpan data buku di Firestore:", err);
+                showToast("Gagal menyimpan data buku ke Cloud Database.", "error");
+            }
+        };
+
+        window.confirmDeleteBook = function(id) {
+            window.state.deleteTargetId = id;
+            const modal = document.getElementById('delete-confirm-modal');
+            if (modal) {
+                modal.classList.remove('hidden');
+                document.getElementById('confirm-delete-btn').onclick = function() {
+                    executeDeleteBook(id);
+                };
+            }
+        };
+
+        window.closeDeleteModal = function() {
+            const modal = document.getElementById('delete-confirm-modal');
+            if (modal) modal.classList.add('hidden');
+            window.state.deleteTargetId = null;
+        };
+
+        // INTEGRASI FIRESTORE: HAPUS BUKU
+        window.executeDeleteBook = async function(id) {
+            const book = window.state.books.find(b => b.id === id);
+            if (!book) return;
+
+            const isCurrentlyLoaned = window.state.borrowedBooks.some(l => l.bookId === id);
+            if (isCurrentlyLoaned) {
+                showToast("Gagal! Buku \"" + book.title + "\" sedang dipinjam oleh pembaca.", "error");
+                closeDeleteModal();
+                return;
             }
 
-            closeAddBookModal();
-            updateAllViews();
-        }
+            try {
+                // Hapus buku di Firestore
+                const bookDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'books', id);
+                await deleteDoc(bookDocRef);
 
-        // CONFIRM DELETE
-        function confirmDeleteBook(id) {
-            state.deleteTargetId = id;
-            const modal = document.getElementById('delete-confirm-modal');
-            modal.classList.remove('hidden');
-            
-            // Set event handler confirmation
-            document.getElementById('confirm-delete-btn').onclick = function() {
-                executeDeleteBook(id);
-            };
-        }
-
-        function closeDeleteModal() {
-            document.getElementById('delete-confirm-modal').classList.add('hidden');
-            state.deleteTargetId = null;
-        }
-
-        // EKSEKUSI PENGHAPUSAN BUKU
-        function executeDeleteBook(id) {
-            const index = state.books.findIndex(b => b.id === id);
-            if (index !== -1) {
-                const bookTitle = state.books[index].title;
-                
-                // Pastikan buku tidak sedang dipinjam saat ini
-                const isCurrentlyLoaned = state.borrowedBooks.some(l => l.bookId === id);
-                if (isCurrentlyLoaned) {
-                    showToast("Gagal! Buku \"" + bookTitle + "\" sedang dipinjam oleh pembaca.", "error");
-                    closeDeleteModal();
-                    return;
-                }
-
-                state.books.splice(index, 1);
-                showToast("Buku \"" + bookTitle + "\" berhasil dihapus dari inventaris.", "success");
+                showToast("Buku \"" + book.title + "\" berhasil dihapus dari inventaris.", "success");
+            } catch (err) {
+                console.error("Gagal menghapus buku di Firestore:", err);
+                showToast("Gagal menghapus buku dari Cloud Database.", "error");
             }
             closeDeleteModal();
-            updateAllViews();
-        }
+        };
+
+        // --- SISTEM PENYELARASAN SNAPSHOT FIRESTORE (REAL-TIME DATA) ---
+        const syncDatabase = async () => {
+            await initAuth();
+
+            // 1. Sinkronisasi Koleksi Buku (Real-Time)
+            onSnapshot(
+                collection(db, 'artifacts', appId, 'public', 'data', 'books'),
+                (snapshot) => {
+                    const booksList = [];
+                    snapshot.forEach(doc => {
+                        booksList.push(doc.data());
+                    });
+                    
+                    // Gunakan data awal tiruan jika database kosong pertama kali
+                    window.state.books = booksList.length > 0 ? booksList : [...INITIAL_BOOKS];
+                    window.updateAllViews();
+                },
+                (error) => {
+                    console.error("Gagal melakukan sinkronisasi Real-Time Buku:", error);
+                }
+            );
+
+            // 2. Sinkronisasi Koleksi Peminjaman (Real-Time)
+            onSnapshot(
+                collection(db, 'artifacts', appId, 'public', 'data', 'loans'),
+                (snapshot) => {
+                    const loansList = [];
+                    snapshot.forEach(doc => {
+                        loansList.push({ id: doc.id, ...doc.data() });
+                    });
+                    window.state.borrowedBooks = loansList;
+                    window.updateAllViews();
+                },
+                (error) => {
+                    console.error("Gagal melakukan sinkronisasi Real-Time Peminjaman:", error);
+                }
+            );
+
+            // 3. Sinkronisasi Koleksi Kategori (Real-Time)
+            onSnapshot(
+                collection(db, 'artifacts', appId, 'public', 'data', 'categories'),
+                (snapshot) => {
+                    const categoriesList = [];
+                    snapshot.forEach(doc => {
+                        categoriesList.push(doc.data().name);
+                    });
+                    if (categoriesList.length > 0) {
+                        window.state.categories = categoriesList;
+                    }
+                    window.updateAllViews();
+                },
+                (error) => {
+                    console.error("Gagal melakukan sinkronisasi Real-Time Kategori:", error);
+                }
+            );
+
+            // 4. Sinkronisasi Koleksi Logs Aktivitas (Real-Time)
+            onSnapshot(
+                collection(db, 'artifacts', appId, 'public', 'data', 'logs'),
+                (snapshot) => {
+                    const logsList = [];
+                    snapshot.forEach(doc => {
+                        logsList.push(doc.data());
+                    });
+                    // Sort logs di memory berdasarkan timestamp (Aturan Firestore CSP Guardrail)
+                    logsList.sort((a, b) => b.timestamp?.seconds - a.timestamp?.seconds);
+                    window.state.logs = logsList;
+                    window.updateAllViews();
+                },
+                (error) => {
+                    console.error("Gagal melakukan sinkronisasi Real-Time Logs:", error);
+                }
+            );
+        };
+
+        // Menjalankan fungsi sinkronisasi database awan saat halaman web diload
+        syncDatabase();
     </script>
 </body>
 </html>
