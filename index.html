@@ -330,7 +330,7 @@
                                     <p class="text-sm font-bold text-slate-800 leading-relaxed">
                                         Jl. Nusa Indah No. 07 Desa Trahean, Kec. Teweh Selatan, Kab. Barito Utara, Prov. Kalimantan Tengah
                                     </p>
-                                    <span class="inline-block bg-slate-100 text-slate-600 text-[10px] font-bold px-2 py-0.5 rounded-md mt-1">Kode Pos: 73814</span>
+                                    <span class="inline-block bg-slate-100 text-slate-600 text-[10px] font-bold px-2.5 py-0.5 rounded-md mt-1">Kode Pos: 73814</span>
                                 </div>
                             </div>
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -404,7 +404,7 @@
                         <p class="text-sm text-slate-500 mt-1">Sistem kontrol internal untuk mengelola katalog, stok buku, kategori kustom, dan inventarisasi perpustakaan.</p>
                     </div>
                     <div class="flex flex-wrap items-center gap-3">
-                        <!-- Fitur Upload Template Excel/CSV (Baru) -->
+                        <!-- Fitur Upload Template Excel/CSV -->
                         <label class="bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-all shadow-md flex items-center gap-2 cursor-pointer">
                             <i data-lucide="upload" class="w-4 h-4"></i> Unggah Koleksi
                             <input type="file" id="upload-excel-input" accept=".csv" class="hidden" onchange="handleExcelUpload(event)">
@@ -428,7 +428,7 @@
                     </div>
                 </div>
 
-                <!-- Petunjuk Unggah (Baru) -->
+                <!-- Petunjuk Unggah -->
                 <div class="bg-indigo-50/50 rounded-2xl border border-indigo-100 p-4 flex items-start gap-3 text-xs text-indigo-950">
                     <i data-lucide="help-circle" class="w-5 h-5 text-indigo-600 shrink-0 mt-0.5"></i>
                     <div>
@@ -1201,7 +1201,7 @@
                                     <span class="text-[10px] text-slate-400 font-semibold">${book.author}</span>
                                     ${statusTag}
                                 </div>
-                                <h3 class="font-bold text-slate-900 text-sm leading-snug line-clamp-1 group-hover:text-indigo-600 transition-colors cursor-pointer" onclick="openBookDetail('${book.id}')">${book.title}</h3>
+                                <h3 class="font-bold text-slate-900 text-sm leading-snug line-clamp-1 group-hover:text-indigo-600 cursor-pointer transition-colors" onclick="openBookDetail('${book.id}')">${book.title}</h3>
                                 <p class="text-[10px] text-indigo-600 font-mono font-bold tracking-wider mt-1"><i data-lucide="barcode" class="w-3.5 h-3.5 inline mr-1"></i>${book.barcode}</p>
                                 <p class="text-xs text-slate-500 line-clamp-2 mt-2 leading-relaxed">${book.desc}</p>
                             </div>
@@ -1855,9 +1855,9 @@
             }
         }
 
-        // FITUR UGGHAH TEMPLATE KOLEKSI BUKU (CSV) DINAMIS (Baru)
+        // FITUR UNGGAH TEMPLATE KOLEKSI BUKU (CSV) DINAMIS (Telah Diperbaiki)
         function handleExcelUpload(event) {
-            const file = event.target.files;
+            const file = event.target.files; // Diperbaiki: mengambil objek file pertama, bukan kumpulan file list
             if (!file) return;
 
             const reader = new FileReader();
@@ -1871,7 +1871,7 @@
             event.target.value = '';
         }
 
-        // PEMROSES UTAMA PARSING CSV / TEMPLATE
+        // PEMROSES UTAMA PARSING CSV / TEMPLATE (Telah Diperbaiki)
         function processCSVData(csvText) {
             // Bersihkan baris kosong dan split berdasarkan ganti baris (\n atau \r\n)
             const lines = csvText.split(/\r?\n/).filter(line => line.trim() !== "");
@@ -1881,7 +1881,7 @@
             }
 
             // Parsing Header Baris Pertama
-            const header = parseCSVRow(lines);
+            const header = parseCSVRow(lines); // Diperbaiki: mem-parsing baris pertama (index 0) dari kumpulan baris, bukan seluruh array
             const requiredColumns = ["ID Buku", "Barcode", "Judul Buku", "Penulis", "Kategori", "Tahun Terbit", "Stok Tersedia", "Total Stok", "Sinopsis"];
             
             // Validasi kecocokan kolom dengan template unduhan SMAN 3
@@ -1899,15 +1899,16 @@
                 const cols = parseCSVRow(lines[i]);
                 if (cols.length < requiredColumns.length) continue; // Skip baris tidak lengkap
 
-                const id = cols.trim();
-                const barcode = cols.trim();
-                const title = cols.trim();
-                const author = cols.trim();
-                const category = cols.trim();
+                // Diperbaiki: Mengambil data berbasis indeks array cols yang tepat
+                const id = cols ? cols.trim() : "";
+                const barcode = cols ? cols.trim() : "";
+                const title = cols ? cols.trim() : "";
+                const author = cols ? cols.trim() : "";
+                const category = cols ? cols.trim() : "";
                 const year = parseInt(cols) || new Date().getFullYear();
                 const availableStock = parseInt(cols) || 1;
                 const totalStock = parseInt(cols) || 1;
-                const desc = cols.trim();
+                const desc = cols ? cols.trim() : "";
 
                 if (!title || !category) continue; // Skip jika judul atau kategori kosong
 
@@ -1917,7 +1918,7 @@
                 }
 
                 // Cek apakah buku dengan ID atau Barcode ini sudah ada di database perpustakaan
-                const existingBookIndex = state.books.findIndex(b => b.id === id || (b.barcode && b.barcode === barcode));
+                const existingBookIndex = state.books.findIndex(b => b.id === id || (b.barcode && barcode !== "-" && b.barcode === barcode));
 
                 if (existingBookIndex !== -1) {
                     // Jika sudah ada, lakukan update / upsert stok dan info
@@ -1932,7 +1933,7 @@
                     updateCount++;
                 } else {
                     // Jika belum ada, buat entri buku baru di sistem
-                    const finalId = id || `PC-0${state.books.length + 1}`;
+                    const finalId = id && id !== "-" ? id : `PC-0${state.books.length + 1}`;
                     state.books.push({
                         id: finalId,
                         barcode: barcode !== "-" ? barcode : "",
